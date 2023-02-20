@@ -1,0 +1,75 @@
+/*!
+ * @file        main.c
+ *
+ * @brief       Main program body
+ *
+ * @version     V1.0.2
+ *
+ * @date        2022-01-05
+ *
+ * @attention
+ *
+ *  Copyright (C) 2020-2022 Geehy Semiconductor
+ *
+ *  You may not use this file except in compliance with the
+ *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
+ *
+ *  The program is only for reference, which is distributed in the hope
+ *  that it will be usefull and instructional for customers to develop
+ *  their software. Unless required by applicable law or agreed to in
+ *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
+ *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the GEEHY SOFTWARE PACKAGE LICENSE for the governing permissions
+ *  and limitations under the License.
+ */
+
+#include "main.h"
+
+/*!
+ * @brief       Main program
+ *
+ * @param       None
+ *
+ * @retval      None
+ *
+ */
+int main(void)
+{
+    APM_MINI_LEDInit(LED2);
+    RTC_Config();
+
+    while(1)
+    {
+    }
+}
+
+/*!
+ * @brief       RTC Config
+ *
+ * @param       None
+ *
+ * @retval      None
+ *
+ */
+void RTC_Config(void)
+{
+    RCM_EnableAPB1PeriphClock((RCM_APB1_PERIPH_T)RCM_APB1_PERIPH_PMU);
+    PMU_EnableBackupAccess();
+
+    RCM_EnableLSI();
+    while(RCM_ReadStatusFlag(RCM_FLAG_LSIRDY) == RESET);
+    RCM_ConfigRTCCLK(RCM_RTCCLK_LSI);
+    RCM_EnableRTCCLK();
+
+    RTC_WaitForSynchor();
+    RTC_WaitForLastTask();
+
+    RTC_EnableInterrupt(RTC_INT_SEC);
+    RTC_WaitForLastTask();
+
+    RTC_ConfigPrescaler(32767);
+    RTC_WaitForLastTask();
+
+    NVIC_EnableIRQRequest(RTC_IRQn, 0, 0);
+}
+
