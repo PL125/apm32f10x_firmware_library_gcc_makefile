@@ -47,7 +47,7 @@ int main(void)
     USART_Config_T USART_ConfigStruct;
 
     RCM_EnableAHBPeriphClock(RCM_AHB_PERIPH_FPU);
-    RCM->CFG |= BIT27;
+    RCM->CFG |= BIT27;    // RCM->CFG |= (1 << 27);    // RCM->CFG |= (uint32_t) (1 << 27);    // RCM->CFG |= (uint32_t) (1ULL << 27);
 
     RCM_EnableAPB2PeriphClock((RCM_APB2_PERIPH_T)(RCM_APB2_PERIPH_GPIOA | RCM_APB2_PERIPH_USART1));
 
@@ -500,3 +500,14 @@ int fputc(int ch, FILE* f)
 
     return (ch);
 }
+
+/*    https://www.mikrocontroller.net/topic/492672#6258842
+volatile uint32_t *AHBCLKEN    = (uint32_t *)0x40021014;    // [3..3] FPU clock enable
+volatile uint32_t *FPU_CFGR    = (uint32_t *)0x40021004;    // [27..27] FPUDIV
+
+*AHBCLKEN = *AHBCLKEN  | (1<<3);
+while ( (*AHBCLKEN & (1<<3)) == 0 ){};
+
+*FPU_CFGR = *FPU_CFGR | (1<<27);
+while ( (*FPU_CFGR  & (1<<27)) == 0 ){};
+*/
