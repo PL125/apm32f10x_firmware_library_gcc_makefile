@@ -510,4 +510,10 @@ while ( (*AHBCLKEN & (1<<3)) == 0 ){};
 
 *FPU_CFGR = *FPU_CFGR | (1<<27);
 while ( (*FPU_CFGR  & (1<<27)) == 0 ){};
+
+//volatile uint32_t *FPU_Opcode   = (uint32_t  *)0x40024000;
+//*FPU_Opcode = (uint32_t)0x09;
+
+x=0.1f;
+y=sc_math_acos(x);
 */
